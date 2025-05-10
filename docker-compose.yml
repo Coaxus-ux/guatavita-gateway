@@ -1,0 +1,33 @@
+services:
+  mysql5:
+    image: mysql:5.7
+    platform: linux/amd64
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: mydb
+    ports:
+      - "3306:3306"
+
+  sql2008:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    platform: linux/amd64
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Strong!Passw0rd"
+    ports:
+      - "1433:1433"
+
+  app:
+    build: .
+    depends_on:
+      - mysql5
+      - sql2008
+    ports:
+      - "8080:8080"
+      - "9990:9990"
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge
